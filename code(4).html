@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybercrime Investigation Teaching Guide - Operation Silent Harvest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .instructor-note {
+            background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%);
+            border-left: 5px solid #d97706;
+        }
+        .student-content {
+            background: linear-gradient(135deg, #dbeafe 0%, #3b82f6 100%);
+            border-left: 5px solid #2563eb;
+        }
+        .evidence-box {
+            background: linear-gradient(135deg, #f3e8ff 0%, #8b5cf6 100%);
+            border: 2px dashed #7c3aed;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 18px;
+            width: 2px;
+            height: calc(100% - 10px);
+            background: #d1d5db;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            font-family: 'Courier New', monospace;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button.active {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-900 to-purple-900 text-white p-6">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold mb-2">🔍 Cybercrime Investigation Teaching Guide</h1>
+            <h2 class="text-2xl text-blue-200">Case Study: "Operation Silent Harvest"</h2>
+            <p class="text-blue-100 mt-2">Complete Windows Forensics Investigation with Instructor Notes</p>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex overflow-x-auto">
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap active" onclick="showTab('overview')">Case Overview</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('incident-response')">Incident Response</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('memory-forensics')">Memory Forensics</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('registry-analysis')">Registry Analysis</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('file-system')">File System</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('network-forensics')">Network Forensics</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('email-analysis')">Email Analysis</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('malware-analysis')">Malware Analysis</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('event-logs')">Event Logs</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 whitespace-nowrap" onclick="showTab('legal-docs')">Legal Documentation</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        
+        <!-- Case Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">📋 Case Information for Students</h3>
+                    <div class="space-y-3">
+                        <p><strong>Company:</strong> TechCorp Financial Services</p>
+                        <p><strong>Incident Date:</strong> March 15, 2024</p>
+                        <p><strong>Discovery Time:</strong> 2:47 AM</p>
+                        <p><strong>Affected System:</strong> WS-FINANCE-07 (Windows 10 Enterprise)</p>
+                        <p><strong>Lead Investigator:</strong> Detective Sarah Chen</p>
+                        <p><strong>Case Type:</strong> Corporate Data Breach / Malware Infection</p>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-black bg-opacity-30 rounded">
+                        <h4 class="text-lg font-semibold mb-2">Initial SOC Alert</h4>
+                        <div class="code-block p-3 rounded text-sm">
+SOC ALERT - HIGH PRIORITY<br>
+Time: 02:47:33 AM<br>
+Source: SIEM System<br>
+Alert: Unusual outbound traffic detected<br>
+Host: WS-FINANCE-07 (192.168.1.105)<br>
+Destination: 185.243.112.45:443<br>
+Data Volume: 2.3 GB transferred<br>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Instructor Notes</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Teaching Objective:</h4>
+                            <p>Introduce students to a realistic corporate breach scenario. Emphasize the critical nature of time in digital forensics.</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">💡 Key Points to Emphasize:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>2.3 GB is significant data transfer - suggest massive data theft</li>
+                                <li>2:47 AM timing indicates automated process (not human activity)</li>
+                                <li>Financial services = high-value target for cybercriminals</li>
+                                <li>IP 185.243.112.45 - show students how to look up geolocation</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Discussion Starters:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>"What would you do first if you received this alert?"</li>
+                                <li>"Why is the timing significant?"</li>
+                                <li>"What type of data might attackers target in financial services?"</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⏱️ Timing Suggestion:</h4>
+                            <p>Spend 10-15 minutes on this section. Build suspense and get students thinking like investigators.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Timeline -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6 text-center">🕐 Attack Timeline Overview</h3>
+                <div class="relative">
+                    <div class="timeline-item bg-red-50 p-4 rounded mb-4">
+                        <div class="font-bold text-red-700">March 14, 3:30 PM - Initial Compromise</div>
+                        <div class="text-gray-600">Phishing email received by employee</div>
+                    </div>
+                    <div class="timeline-item bg-orange-50 p-4 rounded mb-4">
+                        <div class="font-bold text-orange-700">March 14, 11:15 PM - Malware Installation</div>
+                        <div class="text-gray-600">Employee opens malicious PDF, malware deployed</div>
+                    </div>
+                    <div class="timeline-item bg-yellow-50 p-4 rounded mb-4">
+                        <div class="font-bold text-yellow-700">March 14, 11:30 PM - Persistence Established</div>
+                        <div class="text-gray-600">Registry modified, C2 communication initiated</div>
+                    </div>
+                    <div class="timeline-item bg-purple-50 p-4 rounded mb-4">
+                        <div class="font-bold text-purple-700">March 15, 2:00 AM - Data Exfiltration</div>
+                        <div class="text-gray-600">847 files containing sensitive financial data stolen</div>
+                    </div>
+                    <div class="timeline-item bg-green-50 p-4 rounded">
+                        <div class="font-bold text-green-700">March 15, 2:47 AM - Detection</div>
+                        <div class="text-gray-600">SOC detects anomalous network traffic</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incident Response Tab -->
+        <div id="incident-response" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">🚨 First Responder Actions</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">CRITICAL: What NOT to Do</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>❌ DO NOT power off the system</li>
+                                <li>❌ DO NOT run antivirus scans</li>
+                                <li>❌ DO NOT use the compromised system</li>
+                                <li>❌ DO NOT notify users via company email</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">✅ Proper Response Protocol</h4>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li><strong>Isolate Network:</strong> Disconnect ethernet, disable WiFi</li>
+                                <li><strong>Preserve Memory:</strong> Keep system powered on</li>
+                                <li><strong>Document Scene:</strong> Photos, timestamps, witness statements</li>
+                                <li><strong>Secure Area:</strong> Control physical access</li>
+                                <li><strong>Contact Legal:</strong> Potential law enforcement involvement</li>
+                                <li><strong>Begin Chain of Custody:</strong> Evidence handling procedures</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Incident Response</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Learning Objective:</h4>
+                            <p>Students must understand that their first actions can make or break an investigation. Emphasize the irreversible nature of poor decisions.</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">💡 Key Teaching Points:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Memory is volatile:</strong> Explain RAM contents are lost when powered off</li>
+                                <li><strong>Order of volatility:</strong> Memory > Network connections > Running processes > Files</li>
+                                <li><strong>Legal implications:</strong> Improper handling = inadmissible evidence</li>
+                                <li><strong>Documentation importance:</strong> Everything must be recorded</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎭 Role-Play Exercise:</h4>
+                            <p><strong>Scenario:</strong> "You're the first IT person on scene. A panicked manager says 'Just turn it off and restart it!' What do you do?"</p>
+                            <p><strong>Teaching moment:</strong> Practice diplomatic but firm refusal. Explain consequences in business terms.</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Common Student Mistakes:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Wanting to "fix" the problem immediately</li>
+                                <li>Not understanding legal chain of custody</li>
+                                <li>Forgetting to document everything</li>
+                                <li>Not considering business continuity needs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Section -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">🛠️ Essential Forensic Tools</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="border rounded p-4 hover:shadow-md transition-shadow">
+                        <div class="text-2xl mb-2">💾</div>
+                        <h4 class="font-bold">FTK Imager</h4>
+                        <p class="text-sm text-gray-600">Disk imaging and evidence acquisition</p>
+                    </div>
+                    <div class="border rounded p-4 hover:shadow-md transition-shadow">
+                        <div class="text-2xl mb-2">🧠</div>
+                        <h4 class="font-bold">Volatility</h4>
+                        <p class="text-sm text-gray-600">Memory dump analysis framework</p>
+                    </div>
+                    <div class="border rounded p-4 hover:shadow-md transition-shadow">
+                        <div class="text-2xl mb-2">🌐</div>
+                        <h4 class="font-bold">Wireshark</h4>
+                        <p class="text-sm text-gray-600">Network traffic analysis</p>
+                    </div>
+                    <div class="border rounded p-4 hover:shadow-md transition-shadow">
+                        <div class="text-2xl mb-2">📋</div>
+                        <h4 class="font-bold">RegRipper</h4>
+                        <p class="text-sm text-gray-600">Windows Registry analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Forensics Tab -->
+        <div id="memory-forensics" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">🧠 Memory Forensics Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Volatility Commands Used</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+# Identify the memory profile<br>
+volatility -f memory.dmp imageinfo<br><br>
+# List running processes<br>
+volatility -f memory.dmp --profile=Win10x64 pslist<br><br>
+# Show network connections<br>
+volatility -f memory.dmp --profile=Win10x64 netscan<br><br>
+# Find injected code<br>
+volatility -f memory.dmp --profile=Win10x64 malfind<br><br>
+# Extract process memory<br>
+volatility -f memory.dmp --profile=Win10x64 procdump -p 2847
+                            </div>
+                        </div>
+                        
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Key Findings</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Suspicious Process:</strong> PID 2847 - SystemUpdate.exe</div>
+                                <div><strong>Parent Process:</strong> explorer.exe (Normal)</div>
+                                <div><strong>Unusual Location:</strong> Running from AppData folder</div>
+                                <div><strong>Network Activity:</strong> Connected to 185.243.112.45:443</div>
+                                <div><strong>Injected Code:</strong> Found in svchost.exe process</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Memory Forensics</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Learning Objectives:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Understand why memory analysis is crucial</li>
+                                <li>Learn to identify suspicious processes</li>
+                                <li>Recognize process injection techniques</li>
+                                <li>Correlate memory artifacts with network activity</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Explanation Scripts:</h4>
+                            <div class="bg-yellow-100 p-3 rounded mb-2">
+                                <p><strong>For 'imageinfo' command:</strong> "First, we need to tell Volatility what type of Windows system we're analyzing. Think of it like choosing the right key for a lock."</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded mb-2">
+                                <p><strong>For 'pslist' output:</strong> "Notice SystemUpdate.exe - legitimate Windows updates don't run from user folders. This is our first red flag."</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded">
+                                <p><strong>For 'malfind' results:</strong> "This shows code injection - the malware is hiding inside legitimate Windows processes to avoid detection."</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">💡 Interactive Elements:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Have students guess which processes look suspicious</li>
+                                <li>Show them how to cross-reference PIDs across commands</li>
+                                <li>Demonstrate live memory analysis on a test system</li>
+                                <li>Quiz: "What's wrong with svchost.exe running from C:\Users\temp\?"</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Common Confusions:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Students often focus on process names, not locations</li>
+                                <li>May not understand parent-child process relationships</li>
+                                <li>Difficulty correlating memory and network data</li>
+                                <li>Need to explain why legitimate processes can contain malicious code</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Tree Visualization -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">🌳 Process Tree Analysis</h3>
+                <div class="bg-gray-100 p-4 rounded font-mono text-sm">
+                    <div class="mb-2">explorer.exe (PID: 1756) - LEGITIMATE</div>
+                    <div class="ml-4 mb-2">├── SystemUpdate.exe (PID: 2847) - SUSPICIOUS</div>
+                    <div class="ml-8 mb-2">    ├── cmd.exe (PID: 4102) - SPAWNED BY MALWARE</div>
+                    <div class="ml-8 mb-2">    └── svchost.exe (PID: 3921) - INJECTED/HOLLOWED</div>
+                    <div class="ml-4 mb-2">├── chrome.exe (PID: 2156) - LEGITIMATE</div>
+                    <div class="ml-4">└── notepad.exe (PID: 3245) - LEGITIMATE</div>
+                </div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p><strong>Teaching Point:</strong> Show students how malware often spawns from legitimate processes to appear normal. The parent-child relationships tell the story of the attack.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registry Analysis Tab -->
+        <div id="registry-analysis" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">📋 Registry Forensics</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Autostart Registry Entry</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Location: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run<br>
+Key: "SystemUpdate"<br>
+Value: "C:\Users\jdoe\AppData\Roaming\Microsoft\SystemUpdate.exe"<br>
+Last Modified: 2024-03-14 23:23:17 UTC<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Recent Activity Evidence</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs<br>
+- Financial_Reports.xlsx (Accessed: 2024-03-15 02:15:33)<br>
+- Customer_Database.csv (Accessed: 2024-03-15 02:18:45)<br>
+- Banking_Info.pdf (Accessed: 2024-03-15 02:22:17)<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 USB Device History</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Registry Location:</strong> HKLM\SYSTEM\CurrentControlSet\Enum\USBSTOR</div>
+                                <div><strong>Finding:</strong> No unauthorized USB devices detected</div>
+                                <div><strong>Conclusion:</strong> Network-based infection vector confirmed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Registry Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Teaching Strategy:</h4>
+                            <p>Start by asking: "How does Windows know what programs to start when you boot up?" Lead them to understand the registry as the "brain" of Windows configuration.</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Key Explanations:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>Run Keys:</strong> "These are like Windows' startup checklist. Malware loves to add itself here for persistence."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>Timestamps:</strong> "Registry timestamps are in UTC. Always convert to local time when presenting to jury."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>RecentDocs:</strong> "This shows what files the user recently opened. Notice the timing - all during the attack window."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔍 Demonstration Tips:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Use RegEdit live to show registry structure</li>
+                                <li>Compare normal vs. malicious autostart entries</li>
+                                <li>Show how RegRipper automates analysis</li>
+                                <li>Demonstrate timestamp correlation across different keys</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">❓ Discussion Questions:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>"Why would malware use the name 'SystemUpdate'?"</li>
+                                <li>"What other registry locations might contain evidence?"</li>
+                                <li>"How can we prove this entry wasn't there before the incident?"</li>
+                                <li>"What if the attacker deleted registry entries?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registry Hives Reference -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">📚 Registry Hives Reference Guide</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="border rounded p-4">
+                        <h4 class="font-bold text-lg mb-2 text-blue-600">SYSTEM Hive</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• Hardware configuration</li>
+                            <li>• Services information</li>
+                            <li>• USB device history</li>
+                            <li>• Network configuration</li>
+                        </ul>
+                    </div>
+                    <div class="border rounded p-4">
+                        <h4 class="font-bold text-lg mb-2 text-green-600">SOFTWARE Hive</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• Installed applications</li>
+                            <li>• System autostart entries</li>
+                            <li>• File associations</li>
+                            <li>• Windows configuration</li>
+                        </ul>
+                    </div>
+                    <div class="border rounded p-4">
+                        <h4 class="font-bold text-lg mb-2 text-purple-600">NTUSER.DAT</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• User-specific settings</li>
+                            <li>• Recently accessed files</li>
+                            <li>• User autostart entries</li>
+                            <li>• Desktop preferences</li>
+                        </ul>
+                    </div>
+                    <div class="border rounded p-4">
+                        <h4 class="font-bold text-lg mb-2 text-red-600">SECURITY & SAM</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• User account information</li>
+                            <li>• Password policies</li>
+                            <li>• Logon sessions</li>
+                            <li>• Security settings</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File System Tab -->
+        <div id="file-system" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">💾 File System Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Malware Location & Hashes</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+File Path: C:\Users\jdoe\AppData\Roaming\Microsoft\SystemUpdate.exe<br>
+File Size: 2,847,392 bytes<br>
+MD5: 7d865e959b2466918c9863afca942d0f<br>
+SHA256: a1b2c3d4e5f6789012345678901234567890abcdef...<br>
+Created: 2024-03-14 23:23:15 UTC<br>
+Modified: 2024-03-14 23:23:15 UTC<br>
+Accessed: 2024-03-15 02:45:33 UTC<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Prefetch Analysis</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Prefetch File: SYSTEMUPDATE.EXE-A1B2C3D4.pf<br>
+Run Count: 47 executions<br>
+First Run: 2024-03-14 23:23:17 UTC<br>
+Last Run: 2024-03-15 02:45:33 UTC<br><br>
+Files/Directories Accessed:<br>
+├── C:\Windows\System32\kernel32.dll<br>
+├── C:\Users\jdoe\Documents\Financial_Reports\<br>
+├── C:\Users\jdoe\Desktop\Passwords.txt<br>
+└── C:\Users\jdoe\Downloads\Customer_Data.xlsx<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Timeline Evidence</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>23:15:45:</strong> Malicious PDF downloaded to Downloads folder</div>
+                                <div><strong>23:23:15:</strong> SystemUpdate.exe created in AppData</div>
+                                <div><strong>23:23:17:</strong> First execution recorded in prefetch</div>
+                                <div><strong>02:00:00:</strong> Mass file access begins (847 files)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - File System</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Core Concepts to Teach:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>NTFS Timestamps:</strong> Created, Modified, Accessed, MFT Modified</li>
+                                <li><strong>Hash Values:</strong> Digital fingerprints for file identification</li>
+                                <li><strong>Prefetch Files:</strong> Windows performance optimization that helps forensics</li>
+                                <li><strong>File Allocation:</strong> How deleted files can be recovered</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Explanation Techniques:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Hashes:</strong> "Think of MD5/SHA256 like a fingerprint. Even changing one bit changes the entire hash. It's how we prove file integrity."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Prefetch:</strong> "Windows caches program startup info for speed. Ironically, this helps us track exactly what malware did."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Timestamps:</strong> "NTFS tracks four timestamps. Show how malware tries to hide by matching legitimate file times."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔍 Hands-On Activities:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Calculate MD5 hash of a file using certutil or PowerShell</li>
+                                <li>Examine prefetch files in hex editor</li>
+                                <li>Show NTFS timestamp manipulation techniques</li>
+                                <li>Demonstrate file carving from unallocated space</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Important Caveats:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>SSD TRIM commands can eliminate file recovery opportunities</li>
+                                <li>Encrypted filesystems require additional considerations</li>
+                                <li>Cloud storage sync can complicate timeline analysis</li>
+                                <li>Modern malware often uses fileless techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MFT Analysis Visualization -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">🗂️ Master File Table (MFT) Analysis</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-2 text-left">MFT Entry</th>
+                                <th class="p-2 text-left">Filename</th>
+                                <th class="p-2 text-left">Created</th>
+                                <th class="p-2 text-left">Modified</th>
+                                <th class="p-2 text-left">Size</th>
+                                <th class="p-2 text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b bg-red-50">
+                                <td class="p-2">47832</td>
+                                <td class="p-2">SystemUpdate.exe</td>
+                                <td class="p-2">2024-03-14 23:23:15</td>
+                                <td class="p-2">2024-03-14 23:23:15</td>
+                                <td class="p-2">2,847,392</td>
+                                <td class="p-2 text-red-600">SUSPICIOUS</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-2">47833</td>
+                                <td class="p-2">keylog.txt</td>
+                                <td class="p-2">2024-03-14 23:45:22</td>
+                                <td class="p-2">2024-03-15 02:45:10</td>
+                                <td class="p-2">156,723</td>
+                                <td class="p-2 text-red-600">DELETED</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-2">47834</td>
+                                <td class="p-2">screen_001.jpg</td>
+                                <td class="p-2">2024-03-15 00:15:33</td>
+                                <td class="p-2">2024-03-15 00:15:33</td>
+                                <td class="p-2">89,456</td>
+                                <td class="p-2 text-red-600">DELETED</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p><strong>Teaching Point:</strong> Even deleted files leave MFT entries. Explain how file recovery works and why secure deletion is difficult on modern systems.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Forensics Tab -->
+        <div id="network-forensics" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">🌐 Network Traffic Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Wireshark Analysis Results</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Filter: ip.dst == 185.243.112.45<br>
+Total Packets: 2,847 packets captured<br>
+Data Transferred: 2.3 GB outbound<br><br>
+HTTP POST Requests Detected:<br>
+POST /upload.php HTTP/1.1<br>
+Host: 185.243.112.45<br>
+Content-Length: 15847392<br>
+Content-Type: application/octet-stream<br>
+User-Agent: Mozilla/5.0 (Malware-Agent/1.0)<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">DNS Query Analysis</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Suspicious DNS Queries:<br>
+├── update-service.techcorp-systems.com → 185.243.112.45<br>
+├── secure-updates.microsoft-services.net → 94.156.35.12<br>
+└── backup.system-maintenance.org → 172.245.33.78<br><br>
+Note: These domains are NOT owned by TechCorp or Microsoft<br>
+Registration: Recently registered via anonymous services<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 C2 Communication Pattern</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Beacon Interval:</strong> Every 30 minutes</div>
+                                <div><strong>Protocol:</strong> HTTPS (encrypted)</div>
+                                <div><strong>Peak Traffic:</strong> 2:00 AM - 2:45 AM</div>
+                                <div><strong>Geographic Location:</strong> Eastern Europe (TOR exit nodes)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Network Forensics</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Learning Goals:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Understand TCP/IP fundamentals in forensic context</li>
+                                <li>Learn to identify malicious network patterns</li>
+                                <li>Practice correlating network and host artifacts</li>
+                                <li>Recognize common C2 communication methods</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Teaching Explanations:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For DNS Analysis:</strong> "Attackers often use legitimate-sounding domain names. Notice how these mimic real Microsoft/corporate domains."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For HTTPS Traffic:</strong> "Encryption hides content but not metadata. We can still see timing, size, and frequency patterns."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For User-Agent:</strong> "Most malware tries to blend in. This one was lazy and used 'Malware-Agent' - obvious red flag."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔍 Demonstration Tips:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Show live packet capture during normal vs. malicious activity</li>
+                                <li>Use Wireshark filters to isolate suspicious traffic</li>
+                                <li>Demonstrate DNS lookup tools (nslookup, dig)</li>
+                                <li>Show geographical IP mapping tools</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">❓ Critical Thinking Questions:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>"Why would attackers use HTTPS for malicious traffic?"</li>
+                                <li>"How can we identify C2 traffic in encrypted communications?"</li>
+                                <li>"What would happen if the C2 server went offline?"</li>
+                                <li>"How do we distinguish malware traffic from legitimate HTTPS?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traffic Flow Visualization -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">📊 Network Traffic Flow Analysis</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">WS</div>
+                            <div class="text-sm">Workstation<br>192.168.1.105</div>
+                        </div>
+                        <div class="flex-1 flex items-center justify-center">
+                            <div class="text-red-500 font-bold">→ HTTPS POST →</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">C2</div>
+                            <div class="text-sm">Command Server<br>185.243.112.45</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 mt-6">
+                        <div class="bg-green-100 p-4 rounded">
+                            <h4 class="font-bold text-green-700 mb-2">Initial Beacon</h4>
+                            <div class="text-sm text-green-600">Small packets every 30 min<br>Heartbeat communication</div>
+                        </div>
+                        <div class="bg-yellow-100 p-4 rounded">
+                            <h4 class="font-bold text-yellow-700 mb-2">Command Phase</h4>
+                            <div class="text-sm text-yellow-600">Receive instructions<br>File enumeration commands</div>
+                        </div>
+                        <div class="bg-red-100 p-4 rounded">
+                            <h4 class="font-bold text-red-700 mb-2">Exfiltration</h4>
+                            <div class="text-sm text-red-600">Large data transfers<br>2.3 GB over 45 minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Analysis Tab -->
+        <div id="email-analysis" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">📧 Email Forensic Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Phishing Email Details</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+From: IT-Support@techcorp.com (SPOOFED)<br>
+To: john.doe@techcorp.com<br>
+Subject: URGENT: Critical Security Update Required<br>
+Date: 2024-03-14 15:30:22 EST<br>
+Priority: High<br><br>
+Attachment: Security_Update_March2024.pdf<br>
+File Size: 1,247,392 bytes<br>
+MD5 Hash: f7c3bd3c4a1d2e5f8b9c0d1e2f3a4b5c<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Email Header Analysis</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Received: from mail.suspicious-domain.ru<br>
+&nbsp;&nbsp;&nbsp;&nbsp;by techcorp-mail.com with ESMTP<br>
+X-Originating-IP: 185.243.112.45<br>
+Authentication-Results:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;spf=fail smtp.mailfrom=techcorp.com<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dkim=fail reason="signature verification failed"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmarc=fail (p=reject dis=none)<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Social Engineering Analysis</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Urgency Factor:</strong> "URGENT" and "Critical" in subject</div>
+                                <div><strong>Authority:</strong> Impersonates IT department</div>
+                                <div><strong>Fear Appeal:</strong> Claims security vulnerability</div>
+                                <div><strong>Time Pressure:</strong> "Immediate action required"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Email Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Key Learning Points:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Email headers contain the "DNA" of the message</li>
+                                <li>SPF, DKIM, and DMARC failures indicate spoofing</li>
+                                <li>Social engineering psychology is crucial to understand</li>
+                                <li>Attachment analysis requires sandboxed environment</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Teaching Scripts:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Header Analysis:</strong> "Email headers are like postal markings - they show the path the email took. Notice how the real origin (suspicious-domain.ru) differs from the claimed sender."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Social Engineering:</strong> "This email uses the 'Fear, Uncertainty, Doubt' technique. Count how many psychological triggers you can identify."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Authentication Failures:</strong> "All three email security checks failed. This is like having a fake ID that fails every security test."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔍 Interactive Elements:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Show students how to read raw email headers</li>
+                                <li>Demonstrate online header analysis tools</li>
+                                <li>Compare legitimate vs. phishing emails side-by-side</li>
+                                <li>Role-play: How would you explain this to a jury?</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Safety Reminders:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Never open suspicious attachments on production systems</li>
+                                <li>Use isolated virtual machines for malware analysis</li>
+                                <li>Document everything before making changes</li>
+                                <li>Consider legal implications of accessing email evidence</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Flow Diagram -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">📬 Email Delivery Path Analysis</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white text-xs font-bold">FAKE</div>
+                            <div class="text-sm">Attacker Server<br>suspicious-domain.ru</div>
+                        </div>
+                        <div class="flex-1 flex items-center justify-center">
+                            <div class="text-red-500 font-bold">→ SMTP →</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white text-xs font-bold">MAIL</div>
+                            <div class="text-sm">TechCorp Server<br>techcorp-mail.com</div>
+                        </div>
+                        <div class="flex-1 flex items-center justify-center">
+                            <div class="text-blue-500 font-bold">→ Inbox →</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white text-xs font-bold">USER</div>
+                            <div class="text-sm">John Doe<br>Employee</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                        <h4 class="font-bold text-yellow-800 mb-2">Teaching Point: Email Security Failures</h4>
+                        <ul class="text-sm text-yellow-700 space-y-1">
+                            <li>• <strong>SPF Fail:</strong> Sender's IP not authorized for techcorp.com domain</li>
+                            <li>• <strong>DKIM Fail:</strong> Digital signature verification failed</li>
+                            <li>• <strong>DMARC Fail:</strong> Overall authentication failed, should have been rejected</li>
+                            <li>• <strong>Security Gap:</strong> Email still delivered despite failing all checks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Malware Analysis Tab -->
+        <div id="malware-analysis" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">🦠 Malware Analysis Results</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Static Analysis - File Properties</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+File Type: PE32 executable (GUI)<br>
+Architecture: x86-64<br>
+Packer: UPX 3.96 (Unpacked for analysis)<br>
+Compiler: Microsoft Visual C++ 14.0<br>
+Entry Point: 0x00401000<br>
+Sections: .text, .data, .rsrc, .reloc<br><br>
+Digital Signature: None<br>
+VirusTotal Detection: 47/70 engines<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Behavioral Analysis</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Capabilities Identified:<br>
+├── Keylogger (SetWindowsHookEx API)<br>
+├── Screen Capture (BitBlt, GetDC APIs)<br>
+├── File Enumeration (FindFirstFile/FindNextFile)<br>
+├── Network Communication (WinINet APIs)<br>
+├── Registry Manipulation (RegSetValue)<br>
+└── Process Injection (VirtualAllocEx, WriteProcessMemory)<br><br>
+Persistence Method: Registry Run key<br>
+Anti-Analysis: Basic VM detection<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Malware Family Classification</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Type:</strong> Information Stealer (Infostealer)</div>
+                                <div><strong>Family:</strong> RedLine Stealer variant</div>
+                                <div><strong>Capabilities:</strong> Data theft, keylogging, screenshots</div>
+                                <div><strong>C2 Protocol:</strong> HTTPS with custom headers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Malware Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Analysis Approach:</h4>
+                            <p>Start with static analysis (safe), then dynamic analysis (controlled environment). Always use isolated systems!</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Explanation Framework:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For PE Analysis:</strong> "Think of PE headers like a book's table of contents - they tell us what the program can do before we run it."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For API Calls:</strong> "APIs are like tools in a toolbox. SetWindowsHookEx = keylogger tool, BitBlt = screenshot tool."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Packing:</strong> "UPX packing is like putting the malware in a compressed ZIP file. We need to 'unpack' it to analyze the real code."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Safety Protocol:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Use isolated virtual machines with snapshots</li>
+                                <li>Disable network connections during dynamic analysis</li>
+                                <li>Never run malware on production systems</li>
+                                <li>Document everything before executing samples</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔧 Tools to Demonstrate:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>PEiD or Detect It Easy (packer detection)</li>
+                                <li>Strings utility (text extraction)</li>
+                                <li>IDA Free or Ghidra (disassembly)</li>
+                                <li>Process Monitor (behavior monitoring)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Malware Capabilities Matrix -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">🎯 Malware Capabilities Analysis</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Capability</th>
+                                <th class="p-3 text-left">API Functions Used</th>
+                                <th class="p-3 text-left">Purpose</th>
+                                <th class="p-3 text-left">Evidence Found</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-red-600">Keylogging</td>
+                                <td class="p-3 font-mono text-xs">SetWindowsHookEx, GetAsyncKeyState</td>
+                                <td class="p-3">Capture all keystrokes</td>
+                                <td class="p-3">keylog.txt file (deleted)</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-red-600">Screen Capture</td>
+                                <td class="p-3 font-mono text-xs">BitBlt, GetDC, CreateCompatibleBitmap</td>
+                                <td class="p-3">Take screenshots</td>
+                                <td class="p-3">Multiple .jpg files found</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-red-600">File Enumeration</td>
+                                <td class="p-3 font-mono text-xs">FindFirstFile, FindNextFile</td>
+                                <td class="p-3">Locate valuable files</td>
+                                <td class="p-3">Prefetch shows document access</td>
+                            </tr>
+                            <tr class="border-b bg-gray-50">
+                                <td class="p-3 font-medium text-red-600">Data Exfiltration</td>
+                                <td class="p-3 font-mono text-xs">InternetOpen, HttpSendRequest</td>
+                                <td class="p-3">Upload stolen data</td>
+                                <td class="p-3">2.3 GB network transfer</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-medium text-red-600">Persistence</td>
+                                <td class="p-3 font-mono text-xs">RegOpenKey, RegSetValue</td>
+                                <td class="p-3">Survive reboots</td>
+                                <td class="p-3">Registry Run key modified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Logs Tab -->
+        <div id="event-logs" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">📋 Windows Event Log Analysis</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Security Event Log (Event ID 4688)</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Event ID: 4688 - A new process has been created<br>
+Time: 2024-03-14 23:23:15.234 UTC<br>
+Subject: TECHCORP\jdoe<br>
+Process Name: C:\Users\jdoe\AppData\Roaming\Microsoft\SystemUpdate.exe<br>
+Parent Process: C:\Windows\explorer.exe<br>
+Command Line: "SystemUpdate.exe" -silent -background<br>
+Token Elevation Type: Limited (1)<br>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">System Event Log (Event ID 7045)</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Event ID: 7045 - A service was installed in the system<br>
+Time: 2024-03-14 23:23:18.456 UTC<br>
+Service Name: SystemUpdateService<br>
+Service File Name: C:\Users\jdoe\AppData\Roaming\Microsoft\SystemUpdate.exe<br>
+Service Type: user mode service<br>
+Service Start Type: auto start<br>
+Service Account: LocalSystem<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Logon Analysis (Event ID 4624)</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Normal Hours:</strong> 8:00 AM - 6:00 PM (Mon-Fri)</div>
+                                <div><strong>Suspicious Logon:</strong> 11:15 PM (March 14)</div>
+                                <div><strong>Logon Type:</strong> Interactive (Type 2)</div>
+                                <div><strong>Duration:</strong> 4+ hours (unusual for evening)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Event Logs</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Core Concepts:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Event logs are Windows' "diary" - everything is recorded</li>
+                                <li>Event IDs are standardized - learn the important ones</li>
+                                <li>Timestamps are crucial for timeline correlation</li>
+                                <li>Log retention policies affect available evidence</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">📚 Key Event IDs to Teach:</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                <div class="bg-blue-100 p-2 rounded">
+                                    <strong>4624:</strong> Successful logon
+                                </div>
+                                <div class="bg-red-100 p-2 rounded">
+                                    <strong>4625:</strong> Failed logon
+                                </div>
+                                <div class="bg-green-100 p-2 rounded">
+                                    <strong>4688:</strong> Process creation
+                                </div>
+                                <div class="bg-yellow-100 p-2 rounded">
+                                    <strong>4689:</strong> Process termination
+                                </div>
+                                <div class="bg-purple-100 p-2 rounded">
+                                    <strong>7045:</strong> Service installation
+                                </div>
+                                <div class="bg-orange-100 p-2 rounded">
+                                    <strong>5156:</strong> Network connection
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Teaching Scripts:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Event 4688:</strong> "This shows SystemUpdate.exe was created by explorer.exe - normal parent process. But look at the location - that's suspicious."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Command Line:</strong> "The '-silent -background' flags suggest the malware is trying to run hidden. Legitimate updates don't typically hide."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>For Service Installation:</strong> "Event 7045 shows a service was installed. Services have high privileges - this is how the malware gains persistence."</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🔧 Tools and Techniques:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Event Viewer (built-in Windows tool)</li>
+                                <li>PowerShell Get-EventLog cmdlet</li>
+                                <li>Windows Event Forwarding for centralization</li>
+                                <li>SIEM tools for automated analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Timeline -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">⏰ Event Log Timeline Reconstruction</h3>
+                <div class="space-y-3">
+                    <div class="timeline-item bg-blue-50 p-3 rounded">
+                        <div class="font-bold text-blue-700">23:15:30 - Event 4624 (Logon)</div>
+                        <div class="text-sm text-gray-600">User john.doe logged on interactively</div>
+                    </div>
+                    <div class="timeline-item bg-orange-50 p-3 rounded">
+                        <div class="font-bold text-orange-700">23:23:15 - Event 4688 (Process Creation)</div>
+                        <div class="text-sm text-gray-600">SystemUpdate.exe created by explorer.exe</div>
+                    </div>
+                    <div class="timeline-item bg-red-50 p-3 rounded">
+                        <div class="font-bold text-red-700">23:23:18 - Event 7045 (Service Install)</div>
+                        <div class="text-sm text-gray-600">SystemUpdateService installed for persistence</div>
+                    </div>
+                    <div class="timeline-item bg-purple-50 p-3 rounded">
+                        <div class="font-bold text-purple-700">02:00:15 - Event 5156 (Network Connection)</div>
+                        <div class="text-sm text-gray-600">Outbound connection to 185.243.112.45:443 established</div>
+                    </div>
+                    <div class="timeline-item bg-green-50 p-3 rounded">
+                        <div class="font-bold text-green-700">02:47:33 - Detection</div>
+                        <div class="text-sm text-gray-600">SOC alerts triggered by unusual network activity</div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                    <h4 class="font-bold text-yellow-800 mb-2">Teaching Emphasis:</h4>
+                    <p class="text-sm text-yellow-700">Show students how correlating events from different logs creates a complete picture. No single event tells the whole story.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Documentation Tab -->
+        <div id="legal-docs" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Student Content -->
+                <div class="student-content text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">⚖️ Legal Documentation</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Chain of Custody Requirements</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>• <strong>Who:</strong> Person collecting evidence</li>
+                                <li>• <strong>What:</strong> Description of evidence</li>
+                                <li>• <strong>When:</strong> Date/time of collection</li>
+                                <li>• <strong>Where:</strong> Location of evidence</li>
+                                <li>• <strong>Why:</strong> Reason for collection</li>
+                                <li>• <strong>How:</strong> Method of collection</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-4 bg-black bg-opacity-30 rounded">
+                            <h4 class="font-bold text-lg mb-2">Evidence Integrity Verification</h4>
+                            <div class="code-block p-3 rounded text-sm font-mono">
+Hard Drive Serial: WD-WCAV12345678<br>
+MD5 Hash: 7d865e959b2466918c9863afca942d0f<br>
+SHA256: a1b2c3d4e5f6789012345678901234567890abcdef<br>
+Collection Time: 2024-03-15 03:15:00 UTC<br>
+Collected By: Det. Sarah Chen, Badge #1247<br>
+Witness: John Smith, IT Manager<br>
+Storage Location: Evidence Locker #47<br>
+                            </div>
+                        </div>
+
+                        <div class="evidence-box text-purple-900 p-4 rounded">
+                            <h4 class="font-bold text-lg mb-2">🔍 Legal Admissibility Checklist</h4>
+                            <div class="space-y-2 text-sm">
+                                <div>✅ <strong>Authenticity:</strong> Digital signatures and hashes verified</div>
+                                <div>✅ <strong>Reliability:</strong> Industry-standard tools used</div>
+                                <div>✅ <strong>Chain of Custody:</strong> Complete documentation</div>
+                                <div>✅ <strong>Best Evidence Rule:</strong> Original evidence preserved</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Notes -->
+                <div class="instructor-note text-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">👨‍🏫 Teaching Notes - Legal Aspects</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🎯 Critical Legal Concepts:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Evidence must be legally obtained</li>
+                                <li>Chain of custody cannot be broken</li>
+                                <li>Documentation must be contemporaneous</li>
+                                <li>Expert witness testimony may be required</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">🗣️ Courtroom Testimony Tips:</h4>
+                            <div class="space-y-2">
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>Speak Simply:</strong> "Avoid technical jargon. Say 'the computer program' instead of 'the executable binary.'"</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>Visual Aids:</strong> "Prepare diagrams and screenshots. Juries understand pictures better than technical descriptions."</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded">
+                                    <p><strong>Stay Objective:</strong> "Present facts, not opinions. Say 'the evidence shows' not 'I believe.'"</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">⚠️ Common Legal Pitfalls:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Improper evidence handling renders it inadmissible</li>
+                                <li>Missing documentation breaks chain of custody</li>
+                                <li>Unauthorized access can violate privacy laws</li>
+                                <li>Exceeding search warrant scope invalidates evidence</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">📝 Report Writing Guidelines:</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Write for non-technical audience</li>
+                                <li>Include executive summary for management</li>
+                                <li>Support conclusions with evidence</li>
+                                <li>Use consistent terminology throughout</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evidence Documentation Template -->
+            <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6">📋 Evidence Documentation Template</h3>
+                <div class="border rounded-lg p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-lg mb-3">Evidence Identification</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Case Number:</strong> CASE-2024-0315-001</div>
+                                <div><strong>Evidence Tag:</strong> EV-001-HDD</div>
+                                <div><strong>Description:</strong> Hard drive from workstation WS-FINANCE-07</div>
+                                <div><strong>Make/Model:</strong> Western Digital WD10EZEX</div>
+                                <div><strong>Serial Number:</strong> WD-WCAV12345678</div>
+                                <div><strong>Capacity:</strong> 1TB</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-3">Collection Details</h4>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Date/Time:</strong> March 15, 2024 @ 03:15 UTC</div>
+                                <div><strong>Location:</strong> TechCorp Office, Floor 3, Cubicle 47</div>
+                                <div><strong>Collected By:</strong> Det. Sarah Chen (Badge #1247)</div>
+                                <div><strong>Witness:</strong> John Smith, IT Manager</div>
+                                <div><strong>Method:</strong> Write blocker used, forensic imaging</div>
+                                <div><strong>Storage:</strong> Evidence Locker #47, Police Station</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t">
+                        <h4 class="font-bold text-lg mb-3">Hash Verification</h4>
+                        <div class="bg-gray-100 p-3 rounded font-mono text-xs">
+                            <div>Original Drive MD5: 7d865e959b2466918c9863afca942d0f</div>
+                            <div>Image File MD5: 7d865e959b2466918c9863afca942d0f</div>
+                            <div class="text-green-600 font-bold">✓ HASH VERIFICATION: PASSED</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Assessment Questions -->
+            <div class="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-bold mb-6 text-center">🎓 Final Assessment Questions</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 text-green-700">Technical Questions</h4>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm">
+                            <li>What was the initial infection vector in this case?</li>
+                            <li>How did the malware establish persistence?</li>
+                            <li>What evidence proves data exfiltration occurred?</li>
+                            <li>Which Windows artifacts helped establish the timeline?</li>
+                            <li>How would you identify this malware family?</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 text-blue-700">Legal/Procedural Questions</h4>
+                        <ol class="list-decimal pl-5 space-y-2 text-sm">
+                            <li>Why is chain of custody documentation critical?</li>
+                            <li>What makes digital evidence admissible in court?</li>
+                            <li>How would you explain hash verification to a jury?</li>
+                            <li>What are the key elements of an expert witness report?</li>
+                            <li>How do you maintain evidence integrity during analysis?</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for evidence boxes
+            const evidenceBoxes = document.querySelectorAll('.evidence-box');
+            evidenceBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    this.style.transform = this.style.transform === 'scale(1.02)' ? 'scale(1)' : 'scale(1.02)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+            });
+            
+            // Add hover effects for timeline items
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f0f9ff';
+                    this.style.transform = 'translateX(5px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
